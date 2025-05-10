@@ -893,4 +893,4 @@ if __name__ == '__main__':
     
     # Replit üzerinde çalışırken port 443'ü kullan, aksi takdirde 5000
     port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port, debug=True)
+socketio.run(app, host='0.0.0.0', port=port, debug=True, allow_unsafe_werkzeug=True)
