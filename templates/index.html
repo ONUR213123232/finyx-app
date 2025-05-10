@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinyX V1</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header bölümü -->
+        <header class="app-header">
+            <div class="logo">
+                <h1>FinyX V1</h1>
+            </div>
+            <div class="header-controls">
+                <button id="dark-mode-toggle" class="icon-button">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Ana içerik bölümü -->
+        <main class="app-content">
+            <!-- Filtre paneli -->
+            <section class="filter-panel">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="exchange-select">Borsa:</label>
+                        <select id="exchange-select" class="filter-input">
+                            {% for key, name in exchanges.items() %}
+                            <option value="{{ key }}" {% if current_settings.exchange_id == key %}selected{% endif %}>{{ name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="timeframe-select">Zaman Dilimi:</label>
+                        <select id="timeframe-select" class="filter-input">
+                            <option value="all">Tümü</option>
+                            {% for tf in timeframes %}
+                            <option value="{{ tf }}">{{ tf }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="lookback-input">Tepe Arama (Mum):</label>
+                        <input type="number" id="lookback-input" class="filter-input" 
+                              value="{{ current_settings.lookback_bars }}" min="10" max="200">
+                    </div>
+                </div>
+                
+                <div class="filter-row">
+                    <div class="scan-option">
+                        <h3>Genel Tarama</h3>
+                        <p>Tüm perpetual marketleri tarar ve fırsatları listeler</p>
+                        <div class="filter-buttons">
+                            <button id="start-scan-btn" class="action-button primary">
+                                <i class="fas fa-play"></i> Taramayı Başlat
+                            </button>
+                            <button id="stop-scan-btn" class="action-button danger" style="display: none;">
+                                <i class="fas fa-stop"></i> Taramayı Durdur
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="scan-option">
+                        <h3>Özel Coin Tarama</h3>
+                        <div class="coin-search">
+                            <input type="text" id="coin-symbol" class="filter-input" placeholder="Örn: BTCUSDT">
+                            <button id="scan-coin-btn" class="action-button primary">
+                                <i class="fas fa-search"></i> Coin Tara
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- İçerik bölgesi -->
+            <div class="content-area">
+                <!-- Sinyal tablosu -->
+                <div class="panel signal-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Fibonacci Sinyalleri</h2>
+                        <button id="clear-table-btn" class="action-button secondary">
+                            <i class="fas fa-trash"></i> Tabloyu Temizle
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table id="signal-table" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Sembol</th>
+                                    <th>Zaman Dilimi</th>
+                                    <th>En Güncel Tepe Fiyatı</th>
+                                    <th>En Güncel Tepe Tarihi</th>
+                                    <th>Low Buy Seviyesi</th>
+                                    <th>Medium Buy Seviyesi</th>
+                                    <th>High Buy Seviyesi</th>
+                                    <th>Uzaklık (Mum)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Sinyal verileri JavaScript ile doldurulacak -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Durum çubuğu -->
+            <div class="status-bar">
+                <div id="status-message" class="status-message">Tarama başlatmak için "Taramayı Başlat" butonuna tıklayın.</div>
+                <div class="progress-container">
+                    <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <div class="status-info">
+                    <span><i class="fas fa-signal"></i> Sinyal: <strong id="signal-count">0</strong></span>
+                    <span><i class="fas fa-clock"></i> Son Tarama: <strong id="last-scan-time">-</strong></span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript dosyaları -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
